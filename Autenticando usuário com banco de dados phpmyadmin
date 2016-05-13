@@ -1,0 +1,76 @@
+Conexão com phpmyadmin
+
+Um banco de dados instalado com no mínimo uma tabela:
+
+NOME DO BANCO: SERVER;
+NOME DA TABELA: USUARIO;
+
+com os seguintes campos:
+
+ID_USER do tipo INT tamanho 4 e marcado como primare key e auto increment;
+NOME do tipo VACHAR tamanho 50;
+SENHA do tipo VACHAR tamanho 50.
+
+------------------------------------------------
+index.php
+<html>
+<body>
+<form method="post" action="ope.php" id="formlogin" name="formlogin" >
+<fieldset id="fie">
+<legend>LOGIN</legend><br />
+<label>NOME : </label>
+<input type="text" name="login" id="login"  /><br />
+<label>SENHA :</label>
+<input type="password" name="senha" id="senha" /><br />
+<input type="submit" value="LOGAR"  />
+</fieldset>
+</form>
+</body>
+</html>
+
+------------------------------------------------
+Arquivo: ope.php                                                    
+<?php
+session_start();
+$login = $_POST['login'];
+$senha = $_POST['senha'];
+$con = mysql_connect("127.0.0.1", "alison", "alison") or die ("Sem conexão com o servidor");
+$select = mysql_select_db("SERVER") or die("Sem acesso ao DB");
+$result = mysql_query("SELECT * FROM `USUARIO` WHERE `NOME` = '$login' AND `SENHA`= '$senha'");
+if(mysql_num_rows ($result) > 0 )
+{
+$_SESSION['login'] = $login;
+$_SESSION['senha'] = $senha;
+header('location:site.php');
+}
+else{
+        unset ($_SESSION['login']);
+        unset ($_SESSION['senha']);
+        header('location:index.php');
+}
+
+?>
+--------------------------------------------------------
+Arquivo: site.php                                                   
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-t$
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<?php
+session_start();
+if((!isset ($_SESSION['login']) == true) and (!isset ($_SESSION['senha']) == true))
+{
+        unset($_SESSION['login']);
+        unset($_SESSION['senha']);
+        header('location:index.php');
+        }
+
+$logado = $_SESSION['login'];
+?>
+</head>
+<title>SISTEMA ATIVO</title>
+<?php
+echo "Seja bem vindo!";
+?>
+</body>
+</html>
